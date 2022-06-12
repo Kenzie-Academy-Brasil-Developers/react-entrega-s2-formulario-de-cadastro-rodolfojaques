@@ -6,8 +6,9 @@ box-sizing: border-box;
 border-radius: 1rem;
 box-shadow: grey 0 0 1rem 0;
 
-height: 420px;
+height: 450px;
 width: 300px;
+max-width: 95vw;
 
 display: flex;
 flex-direction: column;

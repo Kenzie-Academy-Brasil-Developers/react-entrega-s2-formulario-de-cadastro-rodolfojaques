@@ -7,29 +7,45 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 
 
-export function Register(){
+export function Register({useHistory}){
+
+    const history = useHistory()
 
     const schema = yup.object().shape({
         name: yup.string().required("Campo obrigatório*"),
         email: yup.string().email("formato de e-mail inválido").required("Campo obrigatório"),
-        password: yup.string().matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[$*&@#])[0-9a-zA-Z$*&@#]{8,}$/).required("Campo obrigatório*"),
-        confirmPassword: yup.string().oneOf([yup.ref('password')]).required('Campo obrigatório*')
+        password: yup.string()
+        .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[$*&@#])[0-9a-zA-Z$*&@#]{8,}$/,"Obrigatórios: letra maiuscula e minuscula, numero e caractere especial ex: @#$%&*")
+        .required("Campo obrigatório*"),
+        confirmPassword: yup.string().oneOf([yup.ref('password')], "As senhas não são compativeis!").required('Campo obrigatório*')
     })
 
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema)
     })
 
-    console.log(errors);
-
-    const formSchema = data => console.log(data);
+    const formSchema = data => {
+        history.push(`/home/${data.name}`)
+    }
 
     return(
         <FormRegister onSubmit={handleSubmit(formSchema)}>
-           <TextField id="standard-basic" label="Nome" variant="standard" {...register("name")}/>
-           <TextField id="standard-basic" label="E-mail" variant="standard" {...register("email")}/>
-           <TextField type={'password'} id="standard-basic" label="Senha" variant="standard" {...register("password")}/>
-           <TextField type={'password'} id="standard-basic" label="Confirmar senha" variant="standard" {...register("confirmPassword")}/>
+            {errors?.name?.message?
+            <TextField error id="name" label="Nome" variant="standard" color="warning" helperText={errors.name?.message} {...register("name")}/>
+            :
+            <TextField id="name" label="Nome" variant="standard" {...register("name")}/>}
+            {errors?.email?.message?
+            <TextField error id="email" label="E-mail" variant="standard" color="warning" helperText={errors.email?.message}{...register("email")}/> 
+            :
+            <TextField id="email" label="E-mail" variant="standard" {...register("email")}/>}
+            {errors?.password?.message?
+            <TextField error type={'password'} id="password" label="Senha" variant="standard" color="warning" helperText={errors.password?.message} {...register("password")}/>
+            :
+            <TextField type={'password'} id="password" label="Senha" variant="standard" {...register("password")}/>}
+            {errors?.confirmPassword?.message?
+            <TextField error type={'password'} id="confirm-password" label="Confirmar senha" variant="standard" color="warning" helperText={errors.confirmPassword?.message} {...register("confirmPassword")}/>
+            :
+            <TextField type={'password'} id="confirm-password" label="Confirmar senha" variant="standard" {...register("confirmPassword")}/>}
            <Button type="submit" variant="outlined">CADASTRAR</Button>
         </FormRegister>
     )

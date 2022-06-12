@@ -1,10 +1,8 @@
 import './App.css';
 
-import { useState } from 'react';
-
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, useHistory } from 'react-router-dom';
 import { Register } from './pages/register';
-
+import { Home } from './pages/loged';
 
 function App() {
 
@@ -12,10 +10,10 @@ function App() {
     <div className="App">
       <Switch>
         <Route exact path={'/'}>
-          <Register/>
+          <Register useHistory={useHistory} />
         </Route>
-        <Route exact path={"/home"}>
-          bbb
+        <Route exact path={"/home/:name"}>
+          <Home />
         </Route>
       </Switch>
     </div>
